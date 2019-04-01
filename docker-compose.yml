@@ -1,0 +1,77 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: ./next-front
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    networks:
+      - front
+      - back
+
+  message:
+    build:
+      context: ./message
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    networks:
+      - front
+      - back 
+
+  user:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    networks:
+      - front
+      - back
+
+  ticket:
+    build:
+      context: ./ticket
+      dockerfile: Dockerfile
+    ports:
+      - '3002:3002'
+    networks:
+      - front
+      - back
+
+  db:
+    image: postgres:10.6-alpine
+    restart: always
+    volumes:
+      - 'db-data:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: kovzirg
+      POSTGRES_PASSWORD: 5kovzirg
+      POSTGRES_DB: kovzirg
+    networks:
+      - back
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    volumes:
+      - 'pg-data:/var/lib/pgadmin'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: trevorhunka@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 5kovzirg
+    ports:
+      - '80:80'
+    depends_on:
+      - db
+    networks:
+      - back
+
+volumes:
+  db-data:
+  pg-data:
+
+networks:
+  front:
+  back:
